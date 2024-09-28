@@ -3,6 +3,7 @@ package com.tarkhan.backend.service.impl;
 import com.tarkhan.backend.entity.Author;
 import com.tarkhan.backend.entity.Image;
 import com.tarkhan.backend.entity.enums.ImageType;
+import com.tarkhan.backend.exception.ResourceNotFoundException;
 import com.tarkhan.backend.model.author.AuthorDTO;
 import com.tarkhan.backend.model.author.CreateAuthorDTO;
 import com.tarkhan.backend.model.author.UpdateAuthorDTO;
@@ -12,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,41 +29,42 @@ public class AuthorServiceImpl implements AuthorService {
     private final ModelMapper modelMapper;
 
     @Override
-    public void createAuthor(CreateAuthorDTO createAuthorDTO, MultipartFile image) throws IOException {
-        Author author = new Author();
-        author.setName(createAuthorDTO.getName());
-        author.setBiography(createAuthorDTO.getBiography());
-        author.setNationality(createAuthorDTO.getNationality());
-        author.setBirthDate(createAuthorDTO.getBirthDate());
-        author.setDeathDate(createAuthorDTO.getDeathDate());
-        File tempFile = File.createTempFile("author-", image.getOriginalFilename());
-        image.transferTo(tempFile);
+    public void createAuthor(CreateAuthorDTO createAuthorDTO) throws IOException {
+        Author author = modelMapper.map(createAuthorDTO, Author.class);
 
-        Image profileImage = imageService.uploadImageToDrive(tempFile, ImageType.AUTHOR);
-        author.setProfileImage(profileImage);
+        if (createAuthorDTO.getImage() != null && !createAuthorDTO.getImage().isEmpty()) {
+            File tempFile = File.createTempFile("author-", createAuthorDTO.getImage().getOriginalFilename());
+            createAuthorDTO.getImage().transferTo(tempFile);
+
+            Image profileImage = imageService.uploadImageToDrive(tempFile, ImageType.AUTHOR);
+
+            author.setProfileImage(profileImage);
+
+            tempFile.delete();
+        }
 
         authorRepository.save(author);
+
     }
 
     @Override
-    public void updateAuthor(Long id, UpdateAuthorDTO updateAuthorDTO, MultipartFile image) throws IOException {
-        Author author = authorRepository.findById(id).orElseThrow(() -> new RuntimeException("Author not found"));
+    public void updateAuthor(Long id, UpdateAuthorDTO updateAuthorDTO)
+            throws IOException {
+        Author author = authorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Author", "ID", id));
 
-        author.setName(updateAuthorDTO.getName());
-        author.setBiography(updateAuthorDTO.getBiography());
-        author.setNationality(updateAuthorDTO.getNationality());
-        author.setBirthDate(updateAuthorDTO.getBirthDate());
-        author.setDeathDate(updateAuthorDTO.getDeathDate());
+        modelMapper.map(updateAuthorDTO, author);
 
-        if (image != null && !image.isEmpty()) {
+        if (updateAuthorDTO.getImage() != null && !updateAuthorDTO.getImage().isEmpty()) {
             Image oldImage = author.getProfileImage();
             imageService.deleteImageFromDrive(oldImage);
 
-            File tempFile = File.createTempFile("author-", image.getOriginalFilename());
-            image.transferTo(tempFile);
+            File tempFile = File.createTempFile("author-", updateAuthorDTO.getImage().getOriginalFilename());
+            updateAuthorDTO.getImage().transferTo(tempFile);
 
             Image newImage = imageService.uploadImageToDrive(tempFile, ImageType.AUTHOR);
             author.setProfileImage(newImage);
+            tempFile.delete();
         }
 
         authorRepository.save(author);
@@ -83,7 +84,12 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     public List<AuthorDTO> getAllAuthors() {
         return authorRepository.findAll().stream()
-                .map(author -> modelMapper.map(author, AuthorDTO.class))
+                .map(author -> {
+                    AuthorDTO authorDTO = modelMapper.map(author, AuthorDTO.class);
+                        authorDTO.setImageId(author.getProfileImage().getId());
+
+                    return authorDTO;
+                })
                 .collect(Collectors.toList());
     }
 }
