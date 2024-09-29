@@ -1,10 +1,10 @@
 package com.tarkhan.backend.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tarkhan.backend.constants.Constants;
 import com.tarkhan.backend.model.ResponseModel;
 import com.tarkhan.backend.model.author.AuthorDTO;
 import com.tarkhan.backend.model.author.CreateAuthorDTO;
+import com.tarkhan.backend.model.author.GetAuthorWithBooksDTO;
 import com.tarkhan.backend.model.author.UpdateAuthorDTO;
 import com.tarkhan.backend.service.AuthorService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,10 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -45,7 +43,6 @@ public class AuthorController {
                 )
         );
     }
-
 
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "Update an existing author")
@@ -82,5 +79,28 @@ public class AuthorController {
         List<AuthorDTO> authors = authorService.getAllAuthors();
 
         return ResponseEntity.ok(authors);
+    }
+
+    @GetMapping("/by-books")
+    @Operation(summary = "Get all authors with books")
+    public ResponseEntity<List<GetAuthorWithBooksDTO>> getAllAuthorsWithBooks() {
+        List<GetAuthorWithBooksDTO> authors = authorService.getAllAuthorsWithBooks();
+        return ResponseEntity.ok(authors);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AuthorDTO> getById(
+            @Valid @PathVariable("id") Long id){
+        AuthorDTO authorDTO = authorService.getByIdAuthor(id);
+        return ResponseEntity.status(HttpStatus.OK).body(authorDTO);
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<List<AuthorDTO>> getAuthorsByPage(
+            @RequestParam("pageNumber") int pageNumber,
+            @RequestParam("pageSize") int pageSize
+    ){
+        List<AuthorDTO> authors = authorService.getPageAllAuthors(pageNumber, pageSize);
+        return ResponseEntity.status(HttpStatus.OK).body(authors);
     }
 }

@@ -23,15 +23,12 @@ public class Book extends BaseEntity {
     private String title;
 
     @NotBlank(message = "Description cannot be empty")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     private String description;
 
     @Min(value = 0, message = "Rating must be at least 0")
     @Max(value = 5, message = "Rating must not exceed 5")
     private Double rating;
-
-    @Past(message = "Published date must be in the past")
-    private LocalDate publishedDate;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")

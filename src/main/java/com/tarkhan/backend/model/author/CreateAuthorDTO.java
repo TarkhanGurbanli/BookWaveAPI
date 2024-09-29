@@ -16,8 +16,6 @@ public class CreateAuthorDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate birthDate;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate deathDate;
     @NotBlank(message = "Nationality cannot be empty")
     private String nationality;
     private String biography;
