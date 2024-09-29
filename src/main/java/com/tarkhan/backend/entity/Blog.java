@@ -27,7 +27,7 @@ public class Blog extends BaseEntity {
     @Column(nullable = false, length = 10000)
     private String content;
 
-    @PastOrPresent(message = "Created date must be in the past or present")
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     private String imageUrl;
@@ -35,8 +35,13 @@ public class Blog extends BaseEntity {
     @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
 
-    @NotNull(message = "Author cannot be null")
+    @NotNull(message = "User cannot be null")
     @ManyToOne
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
 }

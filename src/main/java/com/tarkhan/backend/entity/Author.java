@@ -24,9 +24,6 @@ public class Author extends BaseEntity {
     @Past(message = "Birth date must be in the past")
     private LocalDate birthDate;
 
-    @PastOrPresent(message = "Death date must be in the past or present")
-    private LocalDate deathDate;
-
     @NotBlank(message = "Nationality cannot be empty")
     private String nationality;
 
