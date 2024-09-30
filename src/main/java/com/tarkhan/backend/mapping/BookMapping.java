@@ -6,6 +6,7 @@ import com.tarkhan.backend.entity.Genre;
 import com.tarkhan.backend.entity.Publisher;
 import com.tarkhan.backend.model.author.AuthorDTO;
 import com.tarkhan.backend.model.book.GetBookWithAuthorsDTO;
+import com.tarkhan.backend.model.book.GetBookWithDetailsDTO;
 import com.tarkhan.backend.model.book.GetBookWithGenresDTO;
 import com.tarkhan.backend.model.book.GetBookWithPublishersDTO;
 import com.tarkhan.backend.model.genre.GenreDTO;
@@ -104,6 +105,42 @@ public class BookMapping {
         authorDTO.setImageId(author.getProfileImage().getId());
 
         dto.setAuthor(authorDTO);
+        dto.setImageId(book.getCoverImage().getId());
+        return dto;
+    }
+
+    public GetBookWithDetailsDTO getBookWithDetailsDTO(Book book) {
+        GetBookWithDetailsDTO dto = new GetBookWithDetailsDTO();
+        dto.setId(book.getId());
+        dto.setTitle(book.getTitle());
+        dto.setDescription(book.getDescription());
+        dto.setRating(book.getRating());
+
+        // Author
+        Author author = book.getAuthor();
+        AuthorDTO authorDTO = new AuthorDTO();
+        authorDTO.setId(author.getId());
+        authorDTO.setName(author.getName());
+        authorDTO.setNationality(author.getNationality());
+        authorDTO.setBiography(author.getBiography());
+        authorDTO.setBirthDate(author.getBirthDate());
+        authorDTO.setImageId(author.getProfileImage().getId());
+        dto.setAuthor(authorDTO);
+
+        // Genre
+        Genre genre = book.getGenre();
+        GenreDTO genreDTO = new GenreDTO();
+        genreDTO.setId(genre.getId());
+        genreDTO.setName(genre.getName());
+        dto.setGenre(genreDTO);
+
+        // Publisher
+        Publisher publisher = book.getPublisher();
+        PublisherDTO publisherDTO = new PublisherDTO();
+        publisherDTO.setId(publisher.getId());
+        publisherDTO.setName(publisher.getName());
+        dto.setPublisher(publisherDTO);
+
         dto.setImageId(book.getCoverImage().getId());
         return dto;
     }

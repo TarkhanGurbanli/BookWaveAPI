@@ -14,5 +14,10 @@ public interface BookService {
     List<GetBookWithGenresDTO> getBooksWithGenre();
     List<GetBookWithPublishersDTO> getBooksWithPublisher();
     List<GetBookWithAuthorsDTO> getBooksWithAuthor();
+    GetBookWithGenresDTO getBookByGenre(Long bookId);
+    GetBookWithPublishersDTO getBookByPublisher(Long bookId);
+    GetBookWithAuthorsDTO getBookByAuthor(Long bookId);
+    List<GetBookWithDetailsDTO> getBookWithDetails();
+    GetBookWithDetailsDTO getBookByDetails(Long bookId);
     BookDTO getByIdBook(Long id);
 }

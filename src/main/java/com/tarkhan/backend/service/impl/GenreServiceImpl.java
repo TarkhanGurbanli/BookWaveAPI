@@ -3,8 +3,10 @@ package com.tarkhan.backend.service.impl;
 import com.tarkhan.backend.entity.Genre;
 import com.tarkhan.backend.exception.BookWaveApiException;
 import com.tarkhan.backend.exception.ResourceNotFoundException;
+import com.tarkhan.backend.mapping.GenreMapping;
 import com.tarkhan.backend.model.genre.CreateGenreDTO;
 import com.tarkhan.backend.model.genre.GenreDTO;
+import com.tarkhan.backend.model.genre.GetGenreWithBooksDTO;
 import com.tarkhan.backend.model.genre.UpdateGenreDTO;
 import com.tarkhan.backend.repository.GenreRepository;
 import com.tarkhan.backend.service.GenreService;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class GenreServiceImpl implements GenreService {
 
     private final GenreRepository genreRepository;
+    private final GenreMapping genreMapping;
     private final ModelMapper modelMapper;
 
     @Override
@@ -84,11 +87,26 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public List<GenreDTO> getPageAllGenres(int pageNumber, int pageSize) {
+    public List<GenreDTO> getGenresByPage(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
         List<Genre> genres = genreRepository.findAll(pageable).getContent();
         return genres.stream()
                 .map(genre -> modelMapper.map(genre, GenreDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetGenreWithBooksDTO> getGenresWithBooks() {
+        List<Genre> dtos = genreRepository.findAll();
+        return dtos.stream()
+                .map(genreMapping::toGenreWithBooksDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public GetGenreWithBooksDTO getGenreBooksById(Long genreId) {
+        Genre genre = genreRepository.findById(genreId)
+                .orElseThrow(() -> new ResourceNotFoundException("Genre", "ID", genreId));
+        return genreMapping.toGenreWithBooksDTO(genre);
     }
 }

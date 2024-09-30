@@ -3,7 +3,9 @@ package com.tarkhan.backend.service.impl;
 import com.tarkhan.backend.entity.Publisher;
 import com.tarkhan.backend.exception.BookWaveApiException;
 import com.tarkhan.backend.exception.ResourceNotFoundException;
+import com.tarkhan.backend.mapping.PublisherMapping;
 import com.tarkhan.backend.model.publisher.CreatePublisherDTO;
+import com.tarkhan.backend.model.publisher.GetPublisherWithBooksDTO;
 import com.tarkhan.backend.model.publisher.PublisherDTO;
 import com.tarkhan.backend.model.publisher.UpdatePublisherDTO;
 import com.tarkhan.backend.repository.PublisherRepository;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class PublisherServiceImpl implements PublisherService {
 
     private final PublisherRepository publisherRepository;
+    private final PublisherMapping publisherMapping;
     private final ModelMapper modelMapper;
 
     @Override
@@ -83,11 +86,27 @@ public class PublisherServiceImpl implements PublisherService {
     }
 
     @Override
-    public List<PublisherDTO> getPageAllPublishers(int pageNumber, int pageSize) {
+    public List<PublisherDTO> getPublishersByPage(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
         List<Publisher> publishers = publisherRepository.findAll(pageable).getContent();
         return publishers.stream()
                 .map(publisher -> modelMapper.map(publisher, PublisherDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetPublisherWithBooksDTO> getPublishersWithBooks() {
+        List<Publisher> publishers = publisherRepository.findAll();
+        return publishers.stream()
+                .map(publisherMapping::getPublisherWithBooksDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public GetPublisherWithBooksDTO getPublisherBooksById(Long publisherId) {
+        Publisher publisher = publisherRepository.findById(publisherId)
+                .orElseThrow(() -> new ResourceNotFoundException("Publisher", "ID", publisherId));
+
+        return publisherMapping.getPublisherWithBooksDTO(publisher);
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -157,6 +156,43 @@ public class BookServiceImpl implements BookService {
                 .map(bookMapping::toBookWithAuthors)
                 .collect(Collectors.toList());
         return dtos;
+    }
+
+    @Override
+    public GetBookWithGenresDTO getBookByGenre(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "ID", bookId));
+        return bookMapping.toBookWithGenres(book);
+    }
+
+    @Override
+    public GetBookWithPublishersDTO getBookByPublisher(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "ID", bookId));
+        return bookMapping.toBookWithPublishers(book);
+    }
+
+    @Override
+    public GetBookWithAuthorsDTO getBookByAuthor(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "ID", bookId));
+        return bookMapping.toBookWithAuthors(book);
+    }
+
+    @Override
+    public List<GetBookWithDetailsDTO> getBookWithDetails() {
+        List<Book> books = bookRepository.findAll();
+        return books.stream()
+                .map(bookMapping::getBookWithDetailsDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public GetBookWithDetailsDTO getBookByDetails(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "ID", bookId));
+
+        return bookMapping.getBookWithDetailsDTO(book);
     }
 
 

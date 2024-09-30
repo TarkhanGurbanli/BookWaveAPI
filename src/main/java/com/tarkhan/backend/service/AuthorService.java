@@ -14,6 +14,7 @@ public interface AuthorService {
     void deleteAuthor(Long id) throws IOException;
     List<AuthorDTO> getAllAuthors();
     List<GetAuthorWithBooksDTO> getAllAuthorsWithBooks();
-    List<AuthorDTO> getPageAllAuthors(int pageNumber, int pageSize);
+    GetAuthorWithBooksDTO getAuthorBooksById(Long authorId);
+    List<AuthorDTO> getAuthorsByPage(int pageNumber, int pageSize);
     AuthorDTO getByIdAuthor(Long id);
 }

@@ -23,8 +23,6 @@ public class Quote extends BaseEntity {
     @Column(nullable = false, length = 500)
     private String text;
 
-    private LocalDateTime createdAt;
-
     @NotNull(message = "Book cannot be null")
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)

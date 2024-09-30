@@ -109,9 +109,16 @@ public class AuthorServiceImpl implements AuthorService {
         return dtos;
     }
 
+    @Override
+    public GetAuthorWithBooksDTO getAuthorBooksById(Long authorId) {
+        Author author = authorRepository.findById(authorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Author", "ID", authorId));
+
+        return authorMapping.getAuthorWithBooksDTO(author);
+    }
 
     @Override
-    public List<AuthorDTO> getPageAllAuthors(int pageNumber, int pageSize) {
+    public List<AuthorDTO> getAuthorsByPage(int pageNumber, int pageSize) {
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
         List<Author> authors = authorRepository.findAll(pageable).getContent();
 

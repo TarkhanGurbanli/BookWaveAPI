@@ -26,9 +26,9 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseModel> create(
+    public ResponseEntity<ResponseModel> createBook(
             @Valid @ModelAttribute CreateBookDTO dto
-            )throws IOException {
+    ) throws IOException {
         bookService.createBook(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseModel(
@@ -39,10 +39,10 @@ public class BookController {
     }
 
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseModel> update(
+    public ResponseEntity<ResponseModel> updateBook(
             @Valid @PathVariable("id") Long id,
             @Valid @ModelAttribute UpdateBookDTO dto
-    )throws IOException {
+    ) throws IOException {
         bookService.updateBook(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseModel(
@@ -53,9 +53,9 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseModel> delete(
+    public ResponseEntity<ResponseModel> deleteBook(
             @Valid @PathVariable("id") Long id
-    )throws IOException {
+    ) throws IOException {
         bookService.deleteBook(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                 new ResponseModel(
@@ -66,41 +66,79 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BookDTO>> getAll(){
+    public ResponseEntity<List<BookDTO>> getAllBooks() {
         List<BookDTO> books = bookService.getAllBooks();
         return ResponseEntity.status(HttpStatus.OK).body(books);
     }
 
     @GetMapping("/page")
-    public ResponseEntity<List<BookDTO>> getPageAllList(
+    public ResponseEntity<List<BookDTO>> getBooksByPage(
             @Valid @RequestParam("pageNumber") int pageNumber,
             @Valid @RequestParam("pageSize") int pageSize
-    ){
+    ) {
         List<BookDTO> books = bookService.getPageAllBooks(pageNumber, pageSize);
         return ResponseEntity.status(HttpStatus.OK).body(books);
     }
 
-    @GetMapping("/by-genres")
-    public ResponseEntity<List<GetBookWithGenresDTO>> getBooksWithGenres(){
+    @GetMapping("/genres")
+    public ResponseEntity<List<GetBookWithGenresDTO>> getBooksByGenre() {
         List<GetBookWithGenresDTO> books = bookService.getBooksWithGenre();
         return ResponseEntity.status(HttpStatus.OK).body(books);
     }
 
-    @GetMapping("/by-publishers")
-    public ResponseEntity<List<GetBookWithPublishersDTO>> getBooksWithPublishers(){
+    @GetMapping("/publishers")
+    public ResponseEntity<List<GetBookWithPublishersDTO>> getBooksByPublisher() {
         List<GetBookWithPublishersDTO> books = bookService.getBooksWithPublisher();
         return ResponseEntity.status(HttpStatus.OK).body(books);
     }
 
-    @GetMapping("/by-authors")
-    public ResponseEntity<List<GetBookWithAuthorsDTO>> getBooksWithAuthors(){
+    @GetMapping("/detailed")
+    public ResponseEntity<List<GetBookWithDetailsDTO>> getBooksWithDetails() {
+        List<GetBookWithDetailsDTO> books = bookService.getBookWithDetails();
+        return ResponseEntity.status(HttpStatus.OK).body(books);
+    }
+
+    @GetMapping("/authors")
+    public ResponseEntity<List<GetBookWithAuthorsDTO>> getBooksByAuthor() {
         List<GetBookWithAuthorsDTO> books = bookService.getBooksWithAuthor();
         return ResponseEntity.status(HttpStatus.OK).body(books);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookDTO> getById(@Valid @PathVariable("id") Long id){
+    public ResponseEntity<BookDTO> getBookById(@Valid @PathVariable("id") Long id) {
         BookDTO book = bookService.getByIdBook(id);
+        return ResponseEntity.status(HttpStatus.OK).body(book);
+    }
+
+    @GetMapping("/{bookId}/detailed")
+    public ResponseEntity<GetBookWithDetailsDTO> getBookDetailsById(
+            @Valid @PathVariable("bookId") Long bookId
+    ) {
+        GetBookWithDetailsDTO book = bookService.getBookByDetails(bookId);
+        return ResponseEntity.status(HttpStatus.OK).body(book);
+    }
+
+    @GetMapping("/{bookId}/genres")
+    public ResponseEntity<GetBookWithGenresDTO> getBookGenresById(
+            @Valid @PathVariable("bookId") Long bookId
+    ) {
+        GetBookWithGenresDTO book = bookService.getBookByGenre(bookId);
+        return ResponseEntity.status(HttpStatus.OK).body(book);
+    }
+
+    @GetMapping("/{bookId}/authors")
+    public ResponseEntity<GetBookWithAuthorsDTO> getBookAuthorsById(
+            @Valid @PathVariable("bookId") Long bookId
+    ) {
+        GetBookWithAuthorsDTO book = bookService.getBookByAuthor(bookId);
+        return ResponseEntity.status(HttpStatus.OK).body(book);
+    }
+
+    @GetMapping("/{bookId}/publishers")
+    public ResponseEntity<GetBookWithPublishersDTO> getBookPublisherById(
+            @Valid @PathVariable("bookId") Long bookId
+    ) {
+        GetBookWithPublishersDTO book = bookService.getBookByPublisher(bookId);
         return ResponseEntity.status(HttpStatus.OK).body(book);
     }
 }
