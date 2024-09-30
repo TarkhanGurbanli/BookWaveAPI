@@ -32,6 +32,10 @@ google:
     user: ${USER_FOLDER_ID}
     blog: ${BLOG_FOLDER_ID}
 
+# Json Web Token (JWT)
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+
 # Port
 server:
   port: 9090

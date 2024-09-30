@@ -25,7 +25,7 @@ public class BookController {
 
     private final BookService bookService;
 
-    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/admin", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseModel> createBook(
             @Valid @ModelAttribute CreateBookDTO dto
     ) throws IOException {
@@ -38,7 +38,7 @@ public class BookController {
         );
     }
 
-    @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value = "/admin/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseModel> updateBook(
             @Valid @PathVariable("id") Long id,
             @Valid @ModelAttribute UpdateBookDTO dto
@@ -52,7 +52,7 @@ public class BookController {
         );
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<ResponseModel> deleteBook(
             @Valid @PathVariable("id") Long id
     ) throws IOException {

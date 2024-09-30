@@ -26,7 +26,7 @@ public class GenreController {
 
     private final GenreService genreService;
 
-    @PostMapping
+    @PostMapping(value = "/admin")
     public ResponseEntity<ResponseModel> createGenre(
             @Valid @RequestBody CreateGenreDTO dto
     ) {
@@ -39,7 +39,7 @@ public class GenreController {
         );
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<ResponseModel> updateGenre(
             @Valid @PathVariable("id") Long id,
             @Valid @RequestBody UpdateGenreDTO dto
@@ -53,7 +53,7 @@ public class GenreController {
         );
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<ResponseModel> deleteGenre(
             @Valid @PathVariable("id") Long id
     ) {
@@ -66,7 +66,7 @@ public class GenreController {
         );
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     public ResponseEntity<List<GenreDTO>> getAllGenres() {
         List<GenreDTO> genres = genreService.getAllGenres();
         return ResponseEntity.status(HttpStatus.OK).body(genres);
@@ -78,7 +78,7 @@ public class GenreController {
         return ResponseEntity.status(HttpStatus.OK).body(genresWithBooks);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/admin/{id}")
     public ResponseEntity<GenreDTO> getGenreById(
             @Valid @PathVariable("id") Long id
     ) {

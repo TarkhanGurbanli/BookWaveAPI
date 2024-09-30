@@ -30,7 +30,7 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/admin", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a new author")
     public ResponseEntity<ResponseModel> createAuthor(
             @ModelAttribute CreateAuthorDTO dto
@@ -44,7 +44,7 @@ public class AuthorController {
         );
     }
 
-    @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value = "/admin/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @Operation(summary = "Update an existing author")
     public ResponseEntity<ResponseModel> updateAuthor(
             @Valid @PathVariable Long id,
@@ -59,7 +59,7 @@ public class AuthorController {
         );
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     @Operation(summary = "Delete an author")
     public ResponseEntity<ResponseModel> deleteAuthor(
             @Valid @PathVariable Long id
