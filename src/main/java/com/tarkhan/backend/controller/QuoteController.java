@@ -26,7 +26,7 @@ public class QuoteController {
 
     private final QuoteService quoteService;
 
-    @PostMapping
+    @PostMapping("/admin")
     public ResponseEntity<ResponseModel> createQuote(
             @Valid @RequestBody CreateQuoteDTO dto
     ){
@@ -39,7 +39,7 @@ public class QuoteController {
         );
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<ResponseModel> updateQuote(
             @Valid @PathVariable Long id,
             @Valid @RequestBody UpdateQuoteDTO dto
@@ -53,7 +53,7 @@ public class QuoteController {
         );
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<ResponseModel> deleteQuote(
             @Valid @PathVariable Long id
     ){

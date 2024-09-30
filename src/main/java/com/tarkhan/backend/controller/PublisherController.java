@@ -26,7 +26,7 @@ public class PublisherController {
 
     private final PublisherService publisherService;
 
-    @PostMapping
+    @PostMapping(value = "/admin")
     public ResponseEntity<ResponseModel> createPublisher(
             @Valid @RequestBody CreatePublisherDTO dto
     ) {
@@ -39,7 +39,7 @@ public class PublisherController {
         );
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/admin/{id}")
     public ResponseEntity<ResponseModel> updatePublisher(
             @Valid @PathVariable("id") Long id,
             @Valid @RequestBody UpdatePublisherDTO dto
@@ -53,7 +53,7 @@ public class PublisherController {
         );
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<ResponseModel> deletePublisher(
             @Valid @PathVariable("id") Long id
     ) {
