@@ -1,9 +1,7 @@
 package com.tarkhan.backend.service;
 
-import com.tarkhan.backend.model.genre.CreateGenreDTO;
-import com.tarkhan.backend.model.genre.GenreDTO;
-import com.tarkhan.backend.model.genre.UpdateGenreDTO;
 import com.tarkhan.backend.model.publisher.CreatePublisherDTO;
+import com.tarkhan.backend.model.publisher.GetPublisherWithBooksDTO;
 import com.tarkhan.backend.model.publisher.PublisherDTO;
 import com.tarkhan.backend.model.publisher.UpdatePublisherDTO;
 
@@ -16,5 +14,7 @@ public interface PublisherService {
     PublisherDTO getPublisherById(Long id);
     PublisherDTO getPublisherByName(String name);
     List<PublisherDTO> getAllPublishers();
-    List<PublisherDTO> getPageAllPublishers(int pageNumber, int pageSize);
+    List<PublisherDTO> getPublishersByPage(int pageNumber, int pageSize);
+    List<GetPublisherWithBooksDTO> getPublishersWithBooks();
+    GetPublisherWithBooksDTO getPublisherBooksById(Long publisherId);
 }
