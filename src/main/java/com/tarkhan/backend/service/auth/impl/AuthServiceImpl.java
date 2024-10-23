@@ -8,9 +8,9 @@ import com.tarkhan.backend.model.auth.AuthResponse;
 import com.tarkhan.backend.model.auth.user.LoginDTO;
 import com.tarkhan.backend.model.auth.user.RegisterDTO;
 import com.tarkhan.backend.repository.UserRepository;
-import com.tarkhan.backend.service.auth.JWTService;
-import com.tarkhan.backend.service.auth.UserService;
-import com.tarkhan.backend.service.auth.util.JWTUtil;
+import com.tarkhan.backend.service.auth.AuthService;
+import com.tarkhan.backend.service.auth.JwtService;
+import com.tarkhan.backend.service.auth.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -22,27 +22,27 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JWTService jwtService;
+    private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final JWTUtil jwtUtil;
+    private final JwtUtil jwtUtil;
     private final ModelMapper modelMapper;
 
     @Override
     public AuthResponse register(RegisterDTO request) {
         User user = modelMapper.map(request, User.class);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        user.setRole(Role.USER);
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
 
         user = userRepository.save(user);
+
 
         String token = jwtService.generateToken(user);
         return new AuthResponse(Constants.STATUS_CREATED, Constants.MESSAGE_REGISTER_SUCCESSFUL, token);
@@ -61,6 +61,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Email", "Email", request.getUsername()));
 
         String token = jwtService.generateToken(user);
-        return new AuthResponse(Constants.STATUS_NO_CONTENT, Constants.MESSAGE_LOGIN_SUCCESSFUL, token);
+        return new AuthResponse(Constants.STATUS_OK, Constants.MESSAGE_LOGIN_SUCCESSFUL, token);
     }
 }

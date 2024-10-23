@@ -34,7 +34,8 @@ google:
 
 # Json Web Token (JWT)
 jwt:
-  secret-key: ${JWT_SECRET_KEY}
+ secret_key: ${JWT_SECRET_KEY}
+ expiration_time: ${JWT_EXPIRATION_TIME}
 
 # Port
 server:

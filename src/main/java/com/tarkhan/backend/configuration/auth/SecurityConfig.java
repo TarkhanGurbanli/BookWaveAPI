@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final UserDetailsServiceImpl userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -37,42 +38,32 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http
+            HttpSecurity http,
+            UserDetailsServiceImpl userDetailsServiceImpl
     ) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(
-                                "/api/v1/auths/register",
-                                "/api/v1/auths/login",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/v3/api-docs/**"
+                                "/api/v1/auths/register", "/swagger-ui/**",
+                                "/swagger-ui.html", "/v3/api-docs/**",
+                                "/api/v1/auths/login"
                         ).permitAll()
-
                         .requestMatchers(
-                                "/api/v1/quotes/**",
-                                "/api/v1/books/**",
-                                "/api/v1/genres/**",
-                                "/api/v1/authors/**",
-                                "/api/v1/publishers/**",
-                                "/api/v1/auths/**",
-                                "/api/v1/posts/**",
-                                "/api/v1/comments/**"
+                                "/api/v1/authors/**", "/api/v1/books/**",
+                                "api/v1/genres/**", "/api/v1/publishers/**",
+                                "/api/v1/quotes/**"
                         ).hasAnyAuthority("USER", "ADMIN")
-
-                        .requestMatchers(
-                                "/api/v1/genres/admin",
-                                "/api/v1/books/admin",
-                                "/api/v1/authors/admin",
-                                "/api/v1/publishers/admin"
-                        ).hasAuthority("ADMIN")
-
-                        .anyRequest().authenticated()
-                )
-                .userDetailsService(userDetailsService)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                        .requestMatchers("/api/v1/authors/admin", "/api/v1/books/admin",
+                                "api/v1/genres/admin", "/api/v1/publishers/admin",
+                                "/api/v1/quotes/admin")
+                        .hasAnyAuthority("ADMIN")
+                        .anyRequest()
+                        .authenticated()
+                ).userDetailsService(userDetailsServiceImpl)
+                .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }
