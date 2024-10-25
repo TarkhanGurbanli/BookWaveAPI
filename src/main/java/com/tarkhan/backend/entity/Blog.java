@@ -30,7 +30,10 @@ public class Blog extends BaseEntity {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    private String imageUrl;
+    @ElementCollection
+    @CollectionTable(name = "blog_image_ids", joinColumns = @JoinColumn(name = "blog_id"))
+    @Column(name = "image_id")
+    private List<Long> imageIds = new ArrayList<>();
 
     @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments = new ArrayList<>();
