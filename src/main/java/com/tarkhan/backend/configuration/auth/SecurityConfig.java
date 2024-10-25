@@ -47,12 +47,12 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/v1/auths/register", "/swagger-ui/**",
                                 "/swagger-ui.html", "/v3/api-docs/**",
-                                "/api/v1/auths/login"
-                        ).permitAll()
-                        .requestMatchers(
-                                "/api/v1/authors/**", "/api/v1/books/**",
+                                "/api/v1/auths/login", "/api/v1/authors/**", "/api/v1/books/**",
                                 "api/v1/genres/**", "/api/v1/publishers/**",
                                 "/api/v1/quotes/**"
+                        ).permitAll()
+                        .requestMatchers(
+                                 "/api/v1/users/**"
                         ).hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/api/v1/authors/admin", "/api/v1/books/admin",
                                 "api/v1/genres/admin", "/api/v1/publishers/admin",

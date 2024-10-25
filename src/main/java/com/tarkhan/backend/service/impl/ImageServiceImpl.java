@@ -78,7 +78,6 @@ public class ImageServiceImpl {
             }
 
             res.setFileName(file.getName());
-            res.setFileUrl(imageUrl);
             res.setImageUrl(imageUrl);
             res.setImageType(imageType);
             imageRepository.save(res);
