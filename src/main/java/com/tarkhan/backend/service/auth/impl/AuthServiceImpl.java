@@ -3,6 +3,7 @@ package com.tarkhan.backend.service.auth.impl;
 import com.tarkhan.backend.constants.Constants;
 import com.tarkhan.backend.entity.User;
 import com.tarkhan.backend.entity.enums.Role;
+import com.tarkhan.backend.exception.BookWaveApiException;
 import com.tarkhan.backend.exception.ResourceNotFoundException;
 import com.tarkhan.backend.model.auth.AuthResponse;
 import com.tarkhan.backend.model.auth.user.LoginDTO;
@@ -50,15 +51,20 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthResponse login(LoginDTO request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(),
+                            request.getPassword()
+                    )
+            );
+        } catch (Exception e) {
+            throw new BookWaveApiException(
+                    "Invalid username or password. Please check your credentials and try again.");
+        }
 
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ResourceNotFoundException("Username", "Username", request.getUsername()));
+        User user = userRepository.findByUsername(request.getUsername()).orElseThrow(
+                () -> new ResourceNotFoundException("Username", "Invalid username or password", request.getUsername()));
 
         String token = jwtService.generateToken(user);
         return new AuthResponse(Constants.STATUS_OK, Constants.MESSAGE_LOGIN_SUCCESSFUL, token);

@@ -52,7 +52,7 @@ public class SecurityConfig {
                                 "/api/v1/quotes/**"
                         ).permitAll()
                         .requestMatchers(
-                                 "/api/v1/users/**"
+                                 "/api/v1/users/**", "/api/v1/readBooks/**", "/api/v1/toReadBooks**"
                         ).hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/api/v1/authors/admin", "/api/v1/books/admin",
                                 "api/v1/genres/admin", "/api/v1/publishers/admin",
