@@ -2,11 +2,12 @@ package com.tarkhan.backend.controller;
 
 import com.tarkhan.backend.constants.Constants;
 import com.tarkhan.backend.model.ResponseModel;
-import com.tarkhan.backend.model.readBook.CreateReadBookDTO;
-import com.tarkhan.backend.model.readBook.ReadBookDTO;
-import com.tarkhan.backend.model.readBook.UpdateReadBookDTO;
-import com.tarkhan.backend.service.ToReadBookService;
+import com.tarkhan.backend.model.comment.CommentDTO;
+import com.tarkhan.backend.model.comment.CreateCommentDTO;
+import com.tarkhan.backend.model.comment.UpdateCommentDTO;
+import com.tarkhan.backend.service.CommentService;
 import jakarta.validation.Valid;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,46 +16,39 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Data
 @RestController
-@RequestMapping("/api/v1/toReadBooks")
+@RequestMapping("/api/v1/comments")
 @RequiredArgsConstructor
 @Validated
-public class ToReadBookController {
+public class CommentController {
 
-    private final ToReadBookService toReadBookService;
+    private final CommentService commentService;
 
     @GetMapping
-    public ResponseEntity<List<ReadBookDTO>> readBooks(@RequestHeader("Authorization") String token) {
-        List<ReadBookDTO> readBookDTOS = toReadBookService.getToReadBooks(token);
-        return ResponseEntity.ok(readBookDTOS);
-    }
-
-    @GetMapping("/{pageNumber}/{pageSize}")
-    public ResponseEntity<List<ReadBookDTO>> readBooksByPage(
-            @RequestHeader("Authorization") String token,
-            @RequestParam int pageNumber,
-            @RequestParam int pageSize)
-    {
-        List<ReadBookDTO> readBookDTOS = toReadBookService.getToReadBooksByPage(token, pageNumber, pageSize);
-        return ResponseEntity.ok(readBookDTOS);
+    public ResponseEntity<List<CommentDTO>> getComments(
+            @RequestHeader("Authorization") String token
+    ) {
+        List<CommentDTO> commentDTOS = commentService.getComments(token);
+        return ResponseEntity.ok(commentDTOS);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReadBookDTO> readBooksById(
+    public ResponseEntity<CommentDTO> getCommentById(
             @RequestHeader("Authorization") String token,
             @PathVariable Long id
     )
     {
-        ReadBookDTO readBookDTO = toReadBookService.getToReadBook(token, id);
-        return ResponseEntity.ok(readBookDTO);
+        CommentDTO commentDTO = commentService.getComment(token, id);
+        return ResponseEntity.ok(commentDTO);
     }
 
     @PostMapping
-    public ResponseEntity<ResponseModel> createReadBook(
+    public ResponseEntity<ResponseModel> createComment(
             @RequestHeader("Authorization") String token,
-            @RequestBody @Valid CreateReadBookDTO request
+            @RequestBody @Valid CreateCommentDTO request
     ){
-        toReadBookService.createToReadBook(token, request);
+        commentService.addComment(token, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseModel(
                         Constants.STATUS_CREATED,
@@ -64,12 +58,12 @@ public class ToReadBookController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseModel> updateReadBook(
+    public ResponseEntity<ResponseModel> updateComment(
             @RequestHeader("Authorization") String token,
             @PathVariable @Valid Long id,
-            @RequestBody @Valid UpdateReadBookDTO request
+            @RequestBody @Valid UpdateCommentDTO request
     ){
-        toReadBookService.updateToReadBook(token, id, request);
+        commentService.updateComment(token, id, request);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseModel(
                         Constants.STATUS_OK,
@@ -79,11 +73,11 @@ public class ToReadBookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseModel> deleteReadBook(
+    public ResponseEntity<ResponseModel> deleteComment(
             @RequestHeader("Authorization") String token,
             @PathVariable @Valid Long id
     ){
-        toReadBookService.deleteToReadBook(token, id);
+        commentService.deleteComment(token, id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                 new ResponseModel(
                         Constants.STATUS_NO_CONTENT,

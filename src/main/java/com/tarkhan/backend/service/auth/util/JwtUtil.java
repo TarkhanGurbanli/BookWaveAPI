@@ -1,6 +1,7 @@
 package com.tarkhan.backend.service.auth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tarkhan.backend.exception.BookWaveApiException;
 import com.tarkhan.backend.model.auth.JWTModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,13 +16,13 @@ public class JwtUtil {
 
     public JWTModel decodeToken(String authHeader) throws Exception {
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new IllegalArgumentException("Invalid Authorization header.");
+            throw new BookWaveApiException("Invalid Authorization header.");
         }
 
         String token = authHeader.substring(7);
         String[] chunks = token.split("\\.");
         if (chunks.length != 3) {
-            throw new IllegalArgumentException("Invalid JWT token.");
+            throw new BookWaveApiException("Invalid JWT token.");
         }
 
         Base64.Decoder decoder = Base64.getUrlDecoder();

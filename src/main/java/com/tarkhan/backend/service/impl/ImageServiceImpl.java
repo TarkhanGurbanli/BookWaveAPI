@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -86,6 +88,14 @@ public class ImageServiceImpl {
         }
         return res;
     }
+
+    public List<Long> uploadImagesToDrive(List<File> files, ImageType imageType) {
+        return files.stream().map(file -> {
+            Image image = uploadImageToDrive(file, imageType);
+            return image.getId();
+        }).collect(Collectors.toList());
+    }
+
 
     public void deleteImageFromDrive(Image image) throws IOException {
         try {

@@ -62,6 +62,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
 
             jwtService.generateToken(user);
+            jwtService.generateRefreshToken(user);
 
         } catch (Exception e) {
             throw new BookWaveApiException("Error : " + e.getMessage());
@@ -86,6 +87,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
 
             jwtService.generateToken(user);
+            jwtService.generateRefreshToken(user);
 
         } catch (Exception e) {
             throw new BookWaveApiException("Error changing username: " + e.getMessage());
