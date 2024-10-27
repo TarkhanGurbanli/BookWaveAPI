@@ -25,7 +25,4 @@ public class ToReadBook extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
-
-    @NotNull(message = "Added date cannot be null")
-    private LocalDateTime addedDate;
 }

@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class AuthResponse {
     private String statusCode;
     private String statusMessage;
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 }

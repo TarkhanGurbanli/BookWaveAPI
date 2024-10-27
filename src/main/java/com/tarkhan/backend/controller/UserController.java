@@ -39,28 +39,26 @@ public class UserController {
     }
 
     @PatchMapping("/changePassword")
-    public ResponseEntity<AuthResponse> changePassword(
+    public ResponseEntity<ResponseModel> changePassword(
             @RequestHeader("Authorization") String token,
             @RequestBody ChangePasswordDTO request
     ) {
         userService.changePassword(token, request);
-        return ResponseEntity.status(HttpStatus.OK).body(new AuthResponse(
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(
                 Constants.STATUS_NO_CONTENT,
-                Constants.MESSAGE_UPDATE_SUCCESSFUL,
-                token
+                Constants.MESSAGE_UPDATE_SUCCESSFUL
         ));
     }
 
     @PatchMapping("/changeUsername")
-    public ResponseEntity<AuthResponse> changeUsername(
+    public ResponseEntity<ResponseModel> changeUsername(
             @RequestHeader("Authorization") String token,
             @RequestBody ChangeUsernameDTO request
     ) {
         userService.changeUsername(token, request);
-        return ResponseEntity.status(HttpStatus.OK).body(new AuthResponse(
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseModel(
                 Constants.STATUS_NO_CONTENT,
-                Constants.MESSAGE_UPDATE_SUCCESSFUL,
-                token
+                Constants.MESSAGE_UPDATE_SUCCESSFUL
         ));
     }
 }

@@ -7,10 +7,10 @@ import com.tarkhan.backend.model.readBook.UpdateReadBookDTO;
 import java.util.List;
 
 public interface ToReadBookService {
-    void createToReadBook(CreateReadBookDTO request);
-    void updateToReadBook(Long id, UpdateReadBookDTO request);
-    void deleteToReadBook(Long id);
-    ReadBookDTO getToReadBook(Long id);
-    List<ReadBookDTO> getToReadBooks();
-    List<ReadBookDTO> getToReadBooksByPage(int pageNumber, int pageSize);
+    void createToReadBook(String token, CreateReadBookDTO request);
+    void updateToReadBook(String token, Long id, UpdateReadBookDTO request);
+    void deleteToReadBook(String token, Long id);
+    ReadBookDTO getToReadBook(String token, Long id);
+    List<ReadBookDTO> getToReadBooks(String token);
+    List<ReadBookDTO> getToReadBooksByPage(String token, int pageNumber, int pageSize);
 }

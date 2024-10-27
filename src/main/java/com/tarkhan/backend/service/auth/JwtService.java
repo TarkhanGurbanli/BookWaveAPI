@@ -13,4 +13,6 @@ public interface JwtService {
     List<String> getRolesFromToken(String token);
     boolean isValid(String token, UserDetails user);
     String generateToken(User user);
+    String generateRefreshToken(User user);
+    boolean isRefreshTokenValid(String refreshToken, User user);
 }
