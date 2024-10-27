@@ -84,4 +84,22 @@ public class AuthServiceImpl implements AuthService {
             throw new BookWaveApiException("Invalid refresh token.");
         }
     }
+
+    @Override
+    public AuthResponse toggleUserRole(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "ID", userId));
+
+        if (user.getRole() == Role.USER) {
+            user.setRole(Role.ADMIN);
+        } else if (user.getRole() == Role.ADMIN) {
+            user.setRole(Role.USER);
+        }
+
+        userRepository.save(user);
+
+        String newAccessToken = jwtService.generateToken(user);
+        String newRefreshToken = jwtService.generateRefreshToken(user);
+        return new AuthResponse(Constants.STATUS_OK, "User role toggled and tokens refreshed.", newAccessToken, newRefreshToken);
+    }
 }

@@ -6,6 +6,8 @@ import com.tarkhan.backend.model.auth.AuthResponse;
 import com.tarkhan.backend.model.user.ChangePasswordDTO;
 import com.tarkhan.backend.model.user.ChangeUsernameDTO;
 import com.tarkhan.backend.model.user.UploadImageDTO;
+import com.tarkhan.backend.model.user.UserDTO;
+import com.tarkhan.backend.service.EmailSenderService;
 import com.tarkhan.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
@@ -60,5 +63,11 @@ public class UserController {
                 Constants.STATUS_NO_CONTENT,
                 Constants.MESSAGE_UPDATE_SUCCESSFUL
         ));
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 }
