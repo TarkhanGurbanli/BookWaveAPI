@@ -4,6 +4,5 @@ import lombok.Data;
 
 @Data
 public class UpdateReadBookDTO {
-    private Long userId;
     private Long bookId;
 }

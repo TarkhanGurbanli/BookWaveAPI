@@ -24,32 +24,37 @@ public class ReadBookController {
     private final ReadBookService readBookService;
 
     @GetMapping
-    public ResponseEntity<List<ReadBookDTO>> readBooks() {
-        List<ReadBookDTO> readBookDTOS = readBookService.getReadBooks();
+    public ResponseEntity<List<ReadBookDTO>> readBooks(@RequestHeader("Authorization") String token) {
+        List<ReadBookDTO> readBookDTOS = readBookService.getReadBooks(token);
         return ResponseEntity.ok(readBookDTOS);
     }
 
     @GetMapping("/{pageNumber}/{pageSize}")
     public ResponseEntity<List<ReadBookDTO>> readBooksByPage(
+            @RequestHeader("Authorization") String token,
             @RequestParam int pageNumber,
             @RequestParam int pageSize)
     {
-        List<ReadBookDTO> readBookDTOS = readBookService.getReadBooksByPage(pageNumber, pageSize);
+        List<ReadBookDTO> readBookDTOS = readBookService.getReadBooksByPage(token, pageNumber, pageSize);
         return ResponseEntity.ok(readBookDTOS);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ReadBookDTO> readBooksById(@PathVariable Long id)
+    public ResponseEntity<ReadBookDTO> readBooksById(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Long id
+    )
     {
-        ReadBookDTO readBookDTO = readBookService.getReadBook(id);
+        ReadBookDTO readBookDTO = readBookService.getReadBook(token, id);
         return ResponseEntity.ok(readBookDTO);
     }
 
     @PostMapping
     public ResponseEntity<ResponseModel> createReadBook(
+            @RequestHeader("Authorization") String token,
             @RequestBody @Valid CreateReadBookDTO request
     ){
-     readBookService.createReadBook(request);
+     readBookService.createReadBook(token, request);
      return ResponseEntity.status(HttpStatus.CREATED).body(
              new ResponseModel(
                      Constants.STATUS_CREATED,
@@ -60,10 +65,11 @@ public class ReadBookController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseModel> updateReadBook(
+            @RequestHeader("Authorization") String token,
             @PathVariable @Valid Long id,
             @RequestBody @Valid UpdateReadBookDTO request
     ){
-        readBookService.updateReadBook(id, request);
+        readBookService.updateReadBook(token, id, request);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseModel(
                         Constants.STATUS_OK,
@@ -74,9 +80,10 @@ public class ReadBookController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResponseModel> deleteReadBook(
+            @RequestHeader("Authorization") String token,
             @PathVariable @Valid Long id
     ){
-        readBookService.deleteReadBook(id);
+        readBookService.deleteReadBook(token, id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                 new ResponseModel(
                         Constants.STATUS_NO_CONTENT,
