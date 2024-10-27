@@ -1,16 +1,15 @@
 package com.tarkhan.backend.service.impl;
 
-import com.tarkhan.backend.constants.Constants;
 import com.tarkhan.backend.entity.Image;
 import com.tarkhan.backend.entity.User;
 import com.tarkhan.backend.entity.enums.ImageType;
 import com.tarkhan.backend.exception.BookWaveApiException;
 import com.tarkhan.backend.exception.ResourceNotFoundException;
-import com.tarkhan.backend.model.auth.AuthResponse;
 import com.tarkhan.backend.model.auth.JWTModel;
 import com.tarkhan.backend.model.user.ChangePasswordDTO;
 import com.tarkhan.backend.model.user.ChangeUsernameDTO;
 import com.tarkhan.backend.model.user.UploadImageDTO;
+import com.tarkhan.backend.model.user.UserDTO;
 import com.tarkhan.backend.repository.UserRepository;
 import com.tarkhan.backend.service.UserService;
 import com.tarkhan.backend.service.auth.JwtService;
@@ -25,6 +24,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -32,6 +33,7 @@ import java.io.IOException;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
     private final ImageServiceImpl imageService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
@@ -119,4 +121,14 @@ public class UserServiceImpl implements UserService {
             throw new BookWaveApiException("Error getting profile image: " + e.getMessage());
         }
     }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+
+        return users.stream()
+                .map(user -> modelMapper.map(user, UserDTO.class))
+                .collect(Collectors.toList());
+    }
+
 }

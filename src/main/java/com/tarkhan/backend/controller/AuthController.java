@@ -9,10 +9,7 @@ import com.tarkhan.backend.service.auth.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auths")
@@ -38,11 +35,19 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/refresh-token")
+    @PostMapping("/admin/refresh-token")
     public ResponseEntity<AuthResponse> refreshAccessToken(
             @RequestBody String refreshToken)
     {
         AuthResponse response = authService.refreshAccessToken(refreshToken);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/admin/toggle-role/{userId}")
+    public ResponseEntity<AuthResponse> toggleUserRole(
+            @PathVariable Long userId
+    ) {
+        AuthResponse response = authService.toggleUserRole(userId);
         return ResponseEntity.ok(response);
     }
 }

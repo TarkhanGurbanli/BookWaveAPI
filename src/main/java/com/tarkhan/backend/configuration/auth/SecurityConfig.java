@@ -56,7 +56,8 @@ public class SecurityConfig {
                         ).hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/api/v1/authors/admin", "/api/v1/books/admin",
                                 "api/v1/genres/admin", "/api/v1/publishers/admin",
-                                "/api/v1/quotes/admin")
+                                "/api/v1/quotes/admin", "api/v1/emails/**", "/api/v1/auths/admin/**",
+                                "/api/v1/users/admin/**")
                         .hasAnyAuthority("ADMIN")
                         .anyRequest()
                         .authenticated()
