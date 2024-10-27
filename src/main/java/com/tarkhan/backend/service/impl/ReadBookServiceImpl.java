@@ -1,12 +1,18 @@
 package com.tarkhan.backend.service.impl;
 
+import com.tarkhan.backend.entity.Book;
 import com.tarkhan.backend.entity.ReadBook;
+import com.tarkhan.backend.entity.User;
 import com.tarkhan.backend.exception.ResourceNotFoundException;
+import com.tarkhan.backend.model.auth.JWTModel;
 import com.tarkhan.backend.model.readBook.CreateReadBookDTO;
 import com.tarkhan.backend.model.readBook.ReadBookDTO;
 import com.tarkhan.backend.model.readBook.UpdateReadBookDTO;
+import com.tarkhan.backend.repository.BookRepository;
 import com.tarkhan.backend.repository.ReadBookRepository;
+import com.tarkhan.backend.repository.UserRepository;
 import com.tarkhan.backend.service.ReadBookService;
+import com.tarkhan.backend.service.auth.util.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -23,52 +29,167 @@ import java.util.stream.Collectors;
 public class ReadBookServiceImpl implements ReadBookService {
 
     private final ReadBookRepository readBookRepository;
+    private final UserRepository userRepository;
+    private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
+    private final JwtUtil jwtUtil;
 
     @Override
-    public void createReadBook(CreateReadBookDTO request) {
-        readBookRepository.save(modelMapper.map(request, ReadBook.class));
+    public void createReadBook(String token, CreateReadBookDTO request) {
+        try {
+            JWTModel jwtModel = jwtUtil.decodeToken(token);
+            Long userId = jwtModel.getUserId();
+
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new ResourceNotFoundException("User", "ID", userId)
+            );
+
+            Book book = bookRepository.findById(request.getBookId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Book", "ID", request.getBookId())
+            );
+
+            ReadBook readBook = new ReadBook();
+            readBook.setUser(user);
+            readBook.setBook(book);
+
+            readBookRepository.save(readBook);
+
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("ReadBook creation failed" + e.getMessage());
+        }
     }
 
     @Override
-    public void updateReadBook(Long id, UpdateReadBookDTO request) {
-        ReadBook readBook = readBookRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("ReadBook", "ID", id));
+    public void updateReadBook(String token, Long id, UpdateReadBookDTO request) {
+        try {
+            JWTModel jwtModel = jwtUtil.decodeToken(token);
+            Long userId = jwtModel.getUserId();
 
-        modelMapper.map(readBook, request);
-        readBookRepository.save(readBook);
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new ResourceNotFoundException("User", "ID", userId)
+            );
+
+            ReadBook readBook = readBookRepository.findById(id).orElseThrow(
+                    () -> new ResourceNotFoundException("ReadBook", "ID", id)
+            );
+
+            if (!readBook.getUser().getId().equals(userId)) {
+                throw new ResourceNotFoundException("ReadBook", "User ID", userId);
+            }
+
+            Book book = bookRepository.findById(request.getBookId()).orElseThrow(
+                    () -> new ResourceNotFoundException("Book", "ID", request.getBookId())
+            );
+
+            readBook.setBook(book);
+            readBookRepository.save(readBook);
+
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("ReadBook update failed", e);
+        }
     }
 
     @Override
-    public void deleteReadBook(Long id) {
-        ReadBook readBook = readBookRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("ReadBook", "ID", id));
+    public void deleteReadBook(String token, Long id) {
+        try {
+            JWTModel jwtModel = jwtUtil.decodeToken(token);
+            Long userId = jwtModel.getUserId();
 
-        readBookRepository.delete(readBook);
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new ResourceNotFoundException("User", "ID", userId)
+            );
+
+            ReadBook readBook = readBookRepository.findById(id).orElseThrow(
+                    () -> new ResourceNotFoundException("ReadBook", "ID", id)
+            );
+
+            if (!readBook.getUser().getId().equals(userId)) {
+                throw new ResourceNotFoundException("ReadBook", "User ID", userId);
+            }
+
+            readBookRepository.delete(readBook);
+
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("ReadBook deletion failed", e);
+        }
     }
 
     @Override
-    public ReadBookDTO getReadBook(Long id) {
-        ReadBook readBook = readBookRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("ReadBook", "ID", id));
+    public ReadBookDTO getReadBook(String token, Long id) {
+        try {
+            JWTModel jwtModel = jwtUtil.decodeToken(token);
+            Long userId = jwtModel.getUserId();
 
-        return modelMapper.map(readBook, ReadBookDTO.class);
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new ResourceNotFoundException("User", "ID", userId)
+            );
+
+            ReadBook readBook = readBookRepository.findById(id).orElseThrow(
+                    () -> new ResourceNotFoundException("ReadBook", "ID", id)
+            );
+
+            if (!readBook.getUser().getId().equals(userId)) {
+                throw new ResourceNotFoundException("ReadBook", "User ID", userId);
+            }
+
+            return modelMapper.map(readBook, ReadBookDTO.class);
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get ReadBook", e);
+        }
+    }
+
+
+    @Override
+    public List<ReadBookDTO> getReadBooks(String token) {
+        try {
+            JWTModel jwtModel = jwtUtil.decodeToken(token);
+            Long userId = jwtModel.getUserId();
+
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new ResourceNotFoundException("User", "ID", userId)
+            );
+
+            List<ReadBook> readBooks = readBookRepository.findAllByUser(user);
+            return readBooks.stream()
+                    .map((readBook -> modelMapper.map(readBook, ReadBookDTO.class)))
+                    .collect(Collectors.toList());
+
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get ReadBooks", e);
+        }
     }
 
     @Override
-    public List<ReadBookDTO> getReadBooks() {
-        List<ReadBook> readBooks = readBookRepository.findAll();
-        return readBooks.stream().map(
-                readBook -> modelMapper.map(readBook, ReadBookDTO.class))
-                .collect(Collectors.toList());
-    }
+    public List<ReadBookDTO> getReadBooksByPage(String token, int pageNumber, int pageSize) {
+        try {
+            JWTModel jwtModel = jwtUtil.decodeToken(token);
+            Long userId = jwtModel.getUserId();
 
-    @Override
-    public List<ReadBookDTO> getReadBooksByPage(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
-        List<ReadBook> readBooks = readBookRepository.findAll(pageable).getContent();
-        return readBooks.stream().map(
-                readBook -> modelMapper.map(readBook, ReadBookDTO.class))
-                .collect(Collectors.toList());
+            User user = userRepository.findById(userId).orElseThrow(
+                    () -> new ResourceNotFoundException("User", "ID", userId)
+            );
+
+            Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+            List<ReadBook> readBooks =  readBookRepository.findAllByUser(user, pageable);
+            return readBooks.stream()
+                    .map((readBook -> modelMapper.map(readBook, ReadBookDTO.class)))
+                    .collect(Collectors.toList());
+
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get ReadBooks by page", e);
+        }
     }
 }

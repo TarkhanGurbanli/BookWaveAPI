@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final ImageServiceImpl imageService;
-    private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
