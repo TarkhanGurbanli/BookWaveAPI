@@ -20,4 +20,8 @@ public interface BookService {
     List<GetBookWithDetailsDTO> getBookWithDetails();
     GetBookWithDetailsDTO getBookByDetails(Long bookId);
     BookDTO getByIdBook(Long id);
+    List<GetBooksByGenreDTO> getBooksByGenre(String genreName, int pageNumber, int pageSize);
+    List<GetBooksByAuthorDTO> getBooksByAuthor(String authorName, int pageNumber, int pageSize);
+    List<GetBooksByPublisherDTO> getBooksByPublisher(String publisherName, int pageNumber, int pageSize);
+    List<BookDTO> searchBooks(String keyword, String filterBy, int pageNumber, int pageSize);
 }

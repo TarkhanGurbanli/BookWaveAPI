@@ -10,6 +10,8 @@ import com.tarkhan.backend.model.user.UserDTO;
 import com.tarkhan.backend.service.EmailSenderService;
 import com.tarkhan.backend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,14 +24,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
+@Tag(name = "User Management")
 public class UserController {
 
     private final UserService userService;
 
     @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "Create a new author")
+    @Operation(summary = "Upload a user's profile image",
+            description = "Allows a user to upload a new profile image.")
     public ResponseEntity<ResponseModel> uploadImage(
-            @RequestHeader("Authorization") String token,
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
             @ModelAttribute UploadImageDTO dto
     ) throws IOException {
         userService.uploadImage(token, dto);
@@ -42,8 +46,10 @@ public class UserController {
     }
 
     @PatchMapping("/changePassword")
+    @Operation(summary = "Change user password",
+            description = "Allows a user to change their password.")
     public ResponseEntity<ResponseModel> changePassword(
-            @RequestHeader("Authorization") String token,
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
             @RequestBody ChangePasswordDTO request
     ) {
         userService.changePassword(token, request);
@@ -54,8 +60,10 @@ public class UserController {
     }
 
     @PatchMapping("/changeUsername")
+    @Operation(summary = "Change user username",
+            description = "Allows a user to change their username.")
     public ResponseEntity<ResponseModel> changeUsername(
-            @RequestHeader("Authorization") String token,
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
             @RequestBody ChangeUsernameDTO request
     ) {
         userService.changeUsername(token, request);
@@ -66,6 +74,8 @@ public class UserController {
     }
 
     @GetMapping("/admin")
+    @Operation(summary = "Get all users",
+            description = "Retrieves a list of all users in the system for admin.")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> users = userService.getAllUsers();
         return ResponseEntity.ok(users);

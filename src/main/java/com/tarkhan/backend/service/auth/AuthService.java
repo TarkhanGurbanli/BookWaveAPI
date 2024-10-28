@@ -1,5 +1,6 @@
 package com.tarkhan.backend.service.auth;
 
+import com.tarkhan.backend.entity.User;
 import com.tarkhan.backend.model.auth.AuthResponse;
 import com.tarkhan.backend.model.auth.user.LoginDTO;
 import com.tarkhan.backend.model.auth.user.RegisterDTO;

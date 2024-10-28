@@ -1,9 +1,52 @@
+version: '3.8'
+
 services:
-  postgres:
-    image: 'postgres:latest'
+  db:
+    image: postgres:latest
+    container_name: postgres-container
+    restart: always
     environment:
-      - 'POSTGRES_DB=mydatabase'
-      - 'POSTGRES_PASSWORD=secret'
-      - 'POSTGRES_USER=myuser'
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - '5432'
+      - '3232:5432'
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - bookwave-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bookwave-app
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/${POSTGRES_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
+      GOOGLE_SERVICE_ACCOUNT_KEY_PATH: ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH}
+      BOOK_FOLDER_ID: ${BOOK_FOLDER_ID}
+      AUTHOR_FOLDER_ID: ${AUTHOR_FOLDER_ID}
+      USER_FOLDER_ID: ${USER_FOLDER_ID}
+      BLOG_FOLDER_ID: ${BLOG_FOLDER_ID}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
+      JWT_REFRESH_TOKEN_EXPIRATION: ${JWT_REFRESH_TOKEN_EXPIRATION}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+    ports:
+      - '9090:9090'
+    depends_on:
+      - db
+    networks:
+      - bookwave-network
+
+volumes:
+  db_data:
+
+networks:
+  bookwave-network:
