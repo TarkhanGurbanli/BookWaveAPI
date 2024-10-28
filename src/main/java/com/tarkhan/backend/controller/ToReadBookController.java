@@ -6,6 +6,9 @@ import com.tarkhan.backend.model.readBook.CreateReadBookDTO;
 import com.tarkhan.backend.model.readBook.ReadBookDTO;
 import com.tarkhan.backend.model.readBook.UpdateReadBookDTO;
 import com.tarkhan.backend.service.ToReadBookService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,41 +22,47 @@ import java.util.List;
 @RequestMapping("/api/v1/toReadBooks")
 @RequiredArgsConstructor
 @Validated
+@Tag(name = "To-Read Book Management")
 public class ToReadBookController {
 
     private final ToReadBookService toReadBookService;
 
     @GetMapping
-    public ResponseEntity<List<ReadBookDTO>> readBooks(@RequestHeader("Authorization") String token) {
+    @Operation(summary = "Get all to-read books",
+            description = "Retrieves a list of all books the user intends to read.")
+    public ResponseEntity<List<ReadBookDTO>> readBooks(
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token) {
         List<ReadBookDTO> readBookDTOS = toReadBookService.getToReadBooks(token);
         return ResponseEntity.ok(readBookDTOS);
     }
 
     @GetMapping("/{pageNumber}/{pageSize}")
+    @Operation(summary = "Get to-read books by page",
+            description = "Retrieves a paginated list of books the user intends to read.")
     public ResponseEntity<List<ReadBookDTO>> readBooksByPage(
-            @RequestHeader("Authorization") String token,
-            @RequestParam int pageNumber,
-            @RequestParam int pageSize)
-    {
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
+            @Parameter(description = "Page number to retrieve") @RequestParam int pageNumber,
+            @Parameter(description = "Number of items per page") @RequestParam int pageSize) {
         List<ReadBookDTO> readBookDTOS = toReadBookService.getToReadBooksByPage(token, pageNumber, pageSize);
         return ResponseEntity.ok(readBookDTOS);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get to-read book by ID",
+            description = "Retrieves a to-read book by its ID.")
     public ResponseEntity<ReadBookDTO> readBooksById(
-            @RequestHeader("Authorization") String token,
-            @PathVariable Long id
-    )
-    {
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
+            @Parameter(description = "ID of the to-read book to retrieve") @PathVariable Long id) {
         ReadBookDTO readBookDTO = toReadBookService.getToReadBook(token, id);
         return ResponseEntity.ok(readBookDTO);
     }
 
     @PostMapping
+    @Operation(summary = "Create a new to-read book",
+            description = "Creates a new book entry in the to-read list.")
     public ResponseEntity<ResponseModel> createReadBook(
-            @RequestHeader("Authorization") String token,
-            @RequestBody @Valid CreateReadBookDTO request
-    ){
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
+            @RequestBody @Valid CreateReadBookDTO request) {
         toReadBookService.createToReadBook(token, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 new ResponseModel(
@@ -64,11 +73,11 @@ public class ToReadBookController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Update an existing to-read book", description = "Updates an existing book entry in the to-read list by its ID.")
     public ResponseEntity<ResponseModel> updateReadBook(
-            @RequestHeader("Authorization") String token,
-            @PathVariable @Valid Long id,
-            @RequestBody @Valid UpdateReadBookDTO request
-    ){
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
+            @Parameter(description = "ID of the to-read book to update") @PathVariable @Valid Long id,
+            @RequestBody @Valid UpdateReadBookDTO request) {
         toReadBookService.updateToReadBook(token, id, request);
         return ResponseEntity.status(HttpStatus.OK).body(
                 new ResponseModel(
@@ -79,10 +88,10 @@ public class ToReadBookController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a to-read book", description = "Deletes a book entry from the to-read list by its ID.")
     public ResponseEntity<ResponseModel> deleteReadBook(
-            @RequestHeader("Authorization") String token,
-            @PathVariable @Valid Long id
-    ){
+            @Parameter(description = "Authorization token") @RequestHeader("Authorization") String token,
+            @Parameter(description = "ID of the to-read book to delete") @PathVariable @Valid Long id) {
         toReadBookService.deleteToReadBook(token, id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                 new ResponseModel(

@@ -203,4 +203,79 @@ public class BookServiceImpl implements BookService {
 
         return modelMapper.map(book, BookDTO.class);
     }
+
+    @Override
+    public List<GetBooksByGenreDTO> getBooksByGenre(String genreName, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+
+        List<Book> booksPage = bookRepository.findBooksByGenreName(genreName, pageable);
+
+        if(booksPage.isEmpty()){
+            throw new ResourceNotFoundException("Book", "Genre Name", genreName);
+        }
+
+        return booksPage.stream()
+                .map((book -> modelMapper.map(book, GetBooksByGenreDTO.class)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetBooksByAuthorDTO> getBooksByAuthor(String authorName, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+
+        List<Book> booksPage = bookRepository.findBooksByAuthorName(authorName, pageable);
+
+        if(booksPage.isEmpty()){
+            throw new ResourceNotFoundException("Book", "Author Name", authorName);
+        }
+
+        return booksPage.stream()
+                .map((book -> modelMapper.map(book, GetBooksByAuthorDTO.class)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<GetBooksByPublisherDTO> getBooksByPublisher(String publisherName, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+
+        List<Book> booksPage = bookRepository.findBooksByPublisherName(publisherName, pageable);
+
+        if(booksPage.isEmpty()){
+            throw new ResourceNotFoundException("Book", "Publisher Name", publisherName);
+        }
+
+        return booksPage.stream()
+                .map((book -> modelMapper.map(book, GetBooksByPublisherDTO.class)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<BookDTO> searchBooks(String keyword, String filterBy, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        List<Book> books;
+
+        switch (filterBy.toLowerCase()) {
+            case "author":
+                books = bookRepository.findByAuthor_NameContainingIgnoreCase(keyword, pageable);
+                break;
+            case "genre":
+                books = bookRepository.findByGenre_NameContainingIgnoreCase(keyword, pageable);
+                break;
+            case "publisher":
+                books = bookRepository.findByPublisher_NameContainingIgnoreCase(keyword, pageable);
+                break;
+            case "title":
+            default:
+                books = bookRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+                break;
+        }
+
+        if (books.isEmpty()) {
+            throw new ResourceNotFoundException("Book", "Keyword", keyword);
+        }
+
+        return books.stream()
+                .map(book -> modelMapper.map(book, BookDTO.class))
+                .collect(Collectors.toList());
+    }
 }

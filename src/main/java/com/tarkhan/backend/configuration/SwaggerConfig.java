@@ -13,18 +13,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "BookWave REST API Documentation",
+                title = "BookWave REST API",
                 version = "1.0",
-                description = "BookWave REST API Documentation",
+                description = "Comprehensive documentation for the BookWave REST API," +
+                        " including endpoint descriptions and usage instructions.",
                 contact = @Contact(
                         name = "Tarkhan Gurbanli",
-                        email = "tarkhangurbanli@gmail.com",
-                        url = "https://www.bookwave.com"
+                        email = "bookwavesite@gmail.com",
+                        url = "https://www.bookwave.az"
                 )
         ),
         security = {@SecurityRequirement(name = "bearerToken")},
         externalDocs = @ExternalDocumentation(
-                description = "BookWave REST API Documentation",
+                description = "Access the full API documentation",
                 url = "http://localhost:9090/swagger-ui/index.html"
         )
 )
@@ -33,7 +34,9 @@ import org.springframework.context.annotation.Configuration;
                 name = "bearerToken",
                 type = SecuritySchemeType.HTTP,
                 scheme = "bearer",
-                bearerFormat = "JWT"
+                bearerFormat = "JWT",
+                description = "JWT-based authentication scheme for securing API endpoints." +
+                        " Pass the token in the Authorization header as 'Bearer <token>'"
         )
 })
 public class SwaggerConfig {
