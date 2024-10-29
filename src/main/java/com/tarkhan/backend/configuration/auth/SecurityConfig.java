@@ -50,7 +50,8 @@ public class SecurityConfig {
                                 "/api/v1/authors/**", "/api/v1/books/**",
                                 "api/v1/genres/**", "/api/v1/publishers/**",
                                 "/api/v1/quotes/**", "/api/v1/blogs/**",
-                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**"
+                                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**",
+                                "/api/v1/blogs/**"
                         ).permitAll()
                         .requestMatchers(
                                  "/api/v1/users/**", "/api/v1/readBooks/**",
