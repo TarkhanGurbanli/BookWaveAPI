@@ -12,6 +12,7 @@ services:
       - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
     networks:
       - bookwave_bridge_network
 
@@ -24,7 +25,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_container:${POSTGRES_PORT}/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-      GOOGLE_SERVICE_ACCOUNT_KEY_PATH: ${GOOGLE_SERVICE_ACCOUNT_KEY_PATH}
+      GOOGLE_SERVICE_ACCOUNT_KEY_PATH: /app/cred.json
       BOOK_FOLDER_ID: ${BOOK_FOLDER_ID}
       AUTHOR_FOLDER_ID: ${AUTHOR_FOLDER_ID}
       USER_FOLDER_ID: ${USER_FOLDER_ID}
@@ -36,6 +37,8 @@ services:
       MAIL_PORT: ${MAIL_PORT}
       MAIL_USERNAME: ${MAIL_USERNAME}
       MAIL_PASSWORD: ${MAIL_PASSWORD}
+    volumes:
+      - ./cred.json:/app/cred.json
     depends_on:
       - postgres_container
     networks:
