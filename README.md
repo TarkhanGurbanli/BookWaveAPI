@@ -3,8 +3,8 @@
 
 BookWave is a Spring Boot application designed for managing and sharing book-related data seamlessly. This README provides instructions on how to clone, run, and test the application using Docker and Postman.
  - Admin account : 
-      Username: admin
-      Password: admin
+      - Username: admin
+      - Password: admin
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
