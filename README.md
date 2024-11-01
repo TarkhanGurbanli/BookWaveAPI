@@ -40,7 +40,7 @@ After cloning the project, you can easily run the application using Docker. Foll
 
    This command will build the Docker images and start the PostgreSQL and Spring Boot containers.
 
-2. **Access the Application**: Once the containers are running, you can access the application at [http://localhost:9090](http://localhost:9090).
+2. **Access the Application**: Once the containers are running, you can access the application at [http://localhost:9090](http://localhost:9090) or [http://localhost:9090/swagger-ui/index.html](http://localhost:9090/swagger-ui/index.html).
 
 3. **Stop the Application**: To stop the application, press `CTRL + C` in the terminal where the containers are running, or run:
 
