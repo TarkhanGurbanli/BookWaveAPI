@@ -10,6 +10,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "${POSTGRES_PORT}:5432"
+    env_file:
+      - .env/
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./backup.sql:/docker-entrypoint-initdb.d/backup.sql
@@ -21,6 +23,8 @@ services:
     container_name: bookwave_app
     ports:
       - "9090:9090"
+    env_file:
+      - .env/
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_container:${POSTGRES_PORT}/${POSTGRES_DB}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
